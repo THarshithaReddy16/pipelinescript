@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/THarshithaReddy16/mavenproject.git'
+            }
+        }
+
+        stage('Compile-project') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Deployment') {
+            steps {
+                deploy adapters: [
+                    tomcat9(
+                        credentialsId: 'Tomcat_username_password',
+                        url: 'http://34.229.119.153:8080/',
+                        path: ''
+                    )
+                ],
+                war: 'target/*.war',
+                contextPath: 'mavenproject'
+            }
+        }
+    }
+}
